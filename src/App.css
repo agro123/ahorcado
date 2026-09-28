@@ -1,0 +1,151 @@
+/* ---------- Variables de tema (claro / oscuro automático) ---------- */
+:root {
+  --bg: #f4f1ea;
+  --surface: #fffdf8;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #d6d0c4;
+  --accent: #2563eb;
+  --hit: #15803d;
+  --hit-bg: #dcfce7;
+  --miss: #b91c1c;
+  --miss-bg: #fee2e2;
+  --warn: #a16207;
+  --warn-bg: #fef9c3;
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --border: #334155;
+    --accent: #60a5fa;
+    --hit: #4ade80;
+    --hit-bg: #14532d;
+    --miss: #f87171;
+    --miss-bg: #7f1d1d;
+    --warn: #facc15;
+    --warn-bg: #713f12;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.link { background: none; color: var(--accent); text-decoration: underline; }
+
+/* ---------- Layout ---------- */
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+.app__header { text-align: center; margin-bottom: 1.5rem; }
+.app__header h1 { margin: 0 0 0.25rem; font-size: 2.25rem; }
+.app__header p { margin: 0; color: var(--muted); }
+
+.app__board {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 2fr;
+  gap: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+@media (max-width: 680px) {
+  .app__board { grid-template-columns: 1fr; }
+}
+
+.app__play { display: flex; flex-direction: column; gap: 1rem; }
+.app__remaining { margin: 0; color: var(--muted); }
+.app__footer { text-align: center; margin-top: 1rem; }
+
+/* ---------- Dibujo ASCII ---------- */
+.drawing { margin: 0; display: flex; flex-direction: column; align-items: center; }
+.drawing pre {
+  margin: 0;
+  font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  min-height: 8.5em; /* altura fija: el layout no salta al añadir trazos */
+  min-width: 10ch;
+}
+.drawing--lost pre { color: var(--miss); }
+.drawing figcaption { font-size: 0.9rem; color: var(--muted); text-align: center; }
+
+/* ---------- Palabra oculta ---------- */
+.word { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.word__letter {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
+  font-weight: 700;
+  min-width: 1.2ch;
+  text-align: center;
+}
+.word__letter--missed { color: var(--miss); }
+
+/* ---------- Entrada ---------- */
+.input__label { display: block; font-weight: 600; margin-bottom: 0.4rem; }
+.input__row { display: flex; gap: 0.5rem; }
+.input input {
+  width: 4rem;
+  font-size: 1.5rem;
+  text-align: center;
+  text-transform: uppercase;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+}
+.input input:focus { outline: none; border-color: var(--accent); }
+.input input[aria-invalid='true'] { border-color: var(--miss); }
+.input__error { min-height: 1.2em; margin: 0.35rem 0 0; font-size: 0.85rem; color: var(--miss); }
+
+/* ---------- Mensajes ---------- */
+.feedback {
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: var(--bg);
+}
+.feedback--success { background: var(--hit-bg); color: var(--hit); }
+.feedback--error { background: var(--miss-bg); color: var(--miss); }
+.feedback--warning { background: var(--warn-bg); color: var(--warn); }
+
+/* ---------- Historial ---------- */
+.history { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.history h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0 0 0.4rem; }
+.history__list { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.history__empty { color: var(--muted); }
+.chip { padding: 0.2rem 0.55rem; border-radius: 6px; font-weight: 700; font-family: ui-monospace, Menlo, monospace; }
+.chip--hit { background: var(--hit-bg); color: var(--hit); }
+.chip--miss { background: var(--miss-bg); color: var(--miss); text-decoration: line-through; }
+
+/* ---------- Fin de partida ---------- */
+.gameover { text-align: center; padding: 1rem; border-radius: 12px; }
+.gameover h2 { margin: 0 0 0.5rem; }
+.gameover p { margin: 0 0 1rem; }
+.gameover--win { background: var(--hit-bg); color: var(--hit); }
+.gameover--lose { background: var(--miss-bg); color: var(--miss); }
