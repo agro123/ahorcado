@@ -9,8 +9,10 @@ La computadora elige una palabra al azar y dibuja el ahorcado; tú adivinas letr
   - **Fácil – 10 fallos**: cada fallo agrega un trazo, construyendo también la horca:
     base, poste vertical, poste horizontal, cuerda, cabeza, tronco, brazo izq., brazo der.,
     pierna izq., pierna der.
-  - **Difícil – 6 fallos**: la horca ya está dibujada; cada fallo agrega una parte del muñeco,
-    desde la cabeza hasta la pierna derecha.
+  - **Difícil – 6 fallos**: el dibujo también parte desde la base; cada fallo agrega un grupo:
+    base + poste vertical, poste horizontal + cuerda, cabeza, tronco, brazos, piernas.
+- Puedes elegir el skin del muñeco (4 opciones, identificadas solo por un icono);
+  es solo visual y no reinicia la partida.
 - Solo se aceptan letras (A–Z y Ñ). Las tildes se ignoran (`á` cuenta como `a`).
 - Repetir una letra muestra un aviso y **no** resta intentos.
 - Ganas al completar la palabra; pierdes al agotar los fallos del nivel y se revela la palabra.
@@ -31,7 +33,9 @@ src/
 ├── utils/letters.js        # Validación, normalización y selección aleatoria
 ├── hooks/useHangman.js     # Lógica del juego (useReducer + estado derivado)
 ├── components/
-│   ├── HangmanDrawing.jsx  # Dibujo ASCII según los fallos
+│   ├── HangmanDrawing.jsx  # Dibujo SVG según los fallos
+│   ├── skins.jsx           # Skins del muñeco (partes del cuerpo por skin)
+│   ├── SkinSelector.jsx    # Selector de skin
 │   ├── WordDisplay.jsx     # Palabra con guiones bajos
 │   ├── LetterInput.jsx     # Entrada con validación
 │   ├── GuessedLetters.jsx  # Historial de aciertos y fallos

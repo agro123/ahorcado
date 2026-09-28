@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useHangman } from './hooks/useHangman';
 import HangmanDrawing from './components/HangmanDrawing';
 import WordDisplay from './components/WordDisplay';
@@ -6,6 +7,8 @@ import GuessedLetters from './components/GuessedLetters';
 import Feedback from './components/Feedback';
 import GameOver from './components/GameOver';
 import DifficultySelector from './components/DifficultySelector';
+import SkinSelector from './components/SkinSelector';
+import { DEFAULT_SKIN } from './components/skins';
 
 /**
  * Componente raíz. La computadora (el hook useHangman) piensa la palabra
@@ -21,7 +24,7 @@ export default function App() {
     wrongLetters,
     difficulty,
     maxMistakes,
-    prebuiltStrokes,
+    strokeSteps,
     mistakes,
     remaining,
     isWinner,
@@ -31,13 +34,18 @@ export default function App() {
     restart,
     setDifficulty,
   } = useHangman();
+  // El skin es solo visual: cambiarlo no reinicia la partida.
+  const [skin, setSkin] = useState(DEFAULT_SKIN);
 
   return (
     <main className="app">
       <header className="app__header">
         <h1>El Ahorcado</h1>
         <p>La computadora pensó una palabra de {word.length} letras. ¿Puedes adivinarla?</p>
-        <DifficultySelector value={difficulty} onChange={setDifficulty} />
+        <div className="app__options">
+          <DifficultySelector value={difficulty} onChange={setDifficulty} />
+          <SkinSelector value={skin} onChange={setSkin} />
+        </div>
       </header>
 
       <div className="app__board">
@@ -45,7 +53,8 @@ export default function App() {
         <HangmanDrawing
           mistakes={mistakes}
           maxMistakes={maxMistakes}
-          prebuiltStrokes={prebuiltStrokes}
+          strokeSteps={strokeSteps}
+          skin={skin}
           isLoser={isLoser}
         />
 

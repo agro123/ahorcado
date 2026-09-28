@@ -83,7 +83,7 @@ function hangmanReducer(state, action) {
 export function useHangman() {
   const [state, dispatch] = useReducer(hangmanReducer, null, () => createInitialState());
   const { word, guessed, feedback, difficulty } = state;
-  const { maxMistakes, prebuiltStrokes } = DIFFICULTIES[difficulty];
+  const { maxMistakes, strokeSteps } = DIFFICULTIES[difficulty];
 
   const derived = useMemo(() => {
     const wordLetters = lettersOf(word);
@@ -126,7 +126,7 @@ export function useHangman() {
     feedback,
     difficulty,
     maxMistakes,
-    prebuiltStrokes,
+    strokeSteps,
     ...derived,
     guess,
     restart,

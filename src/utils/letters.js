@@ -1,13 +1,14 @@
 /**
  * Niveles de dificultad.
- * - maxMistakes:  fallos permitidos antes de perder.
- * - prebuiltStrokes: trazos del dibujo que ya aparecen al iniciar
- *   (en difícil la horca completa ya está construida).
- * En ambos casos maxMistakes + prebuiltStrokes = 10 trazos totales.
+ * - maxMistakes: fallos permitidos antes de perder.
+ * - strokeSteps: trazos visibles (de los 10 del dibujo completo) tras cada
+ *   número de fallos; el índice es la cantidad de fallos.
+ *   En fácil cada fallo agrega 1 trazo; en difícil agrega un grupo:
+ *   base+poste, travesaño+cuerda, cabeza, tronco, brazos, piernas.
  */
 export const DIFFICULTIES = {
-  easy: { label: 'Fácil', maxMistakes: 10, prebuiltStrokes: 0 },
-  hard: { label: 'Difícil', maxMistakes: 6, prebuiltStrokes: 4 },
+  easy: { label: 'Fácil', maxMistakes: 10, strokeSteps: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] },
+  hard: { label: 'Difícil', maxMistakes: 6, strokeSteps: [0, 2, 4, 5, 6, 8, 10] },
 };
 
 export const DEFAULT_DIFFICULTY = 'hard';

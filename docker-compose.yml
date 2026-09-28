@@ -1,0 +1,13 @@
+services:
+  web:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm ci && npx vite --host 0.0.0.0 --no-open"
+    ports:
+      - "3100:3100"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+
+volumes:
+  node_modules:
