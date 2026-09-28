@@ -5,11 +5,15 @@ La computadora elige una palabra al azar y dibuja el ahorcado; tú adivinas letr
 
 ## Reglas
 
-- Máximo **10 fallos**; cada uno agrega un trazo: base, poste vertical, poste horizontal,
-  cuerda, cabeza, tronco, brazo izq., brazo der., pierna izq., pierna der.
+- Dos niveles (por defecto **Difícil**; cambiar de nivel inicia una partida nueva):
+  - **Fácil – 10 fallos**: cada fallo agrega un trazo, construyendo también la horca:
+    base, poste vertical, poste horizontal, cuerda, cabeza, tronco, brazo izq., brazo der.,
+    pierna izq., pierna der.
+  - **Difícil – 6 fallos**: la horca ya está dibujada; cada fallo agrega una parte del muñeco,
+    desde la cabeza hasta la pierna derecha.
 - Solo se aceptan letras (A–Z y Ñ). Las tildes se ignoran (`á` cuenta como `a`).
 - Repetir una letra muestra un aviso y **no** resta intentos.
-- Ganas al completar la palabra; pierdes al llegar a 10 fallos y se revela la palabra.
+- Ganas al completar la palabra; pierdes al agotar los fallos del nivel y se revela la palabra.
 
 ## Desarrollo
 

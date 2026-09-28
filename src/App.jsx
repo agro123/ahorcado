@@ -5,6 +5,7 @@ import LetterInput from './components/LetterInput';
 import GuessedLetters from './components/GuessedLetters';
 import Feedback from './components/Feedback';
 import GameOver from './components/GameOver';
+import DifficultySelector from './components/DifficultySelector';
 
 /**
  * Componente raíz. La computadora (el hook useHangman) piensa la palabra
@@ -18,6 +19,9 @@ export default function App() {
     feedback,
     correctLetters,
     wrongLetters,
+    difficulty,
+    maxMistakes,
+    prebuiltStrokes,
     mistakes,
     remaining,
     isWinner,
@@ -25,6 +29,7 @@ export default function App() {
     isGameOver,
     guess,
     restart,
+    setDifficulty,
   } = useHangman();
 
   return (
@@ -32,11 +37,17 @@ export default function App() {
       <header className="app__header">
         <h1>El Ahorcado</h1>
         <p>La computadora pensó una palabra de {word.length} letras. ¿Puedes adivinarla?</p>
+        <DifficultySelector value={difficulty} onChange={setDifficulty} />
       </header>
 
       <div className="app__board">
         {/* Columna izquierda: el dibujo que avanza con cada fallo */}
-        <HangmanDrawing mistakes={mistakes} isLoser={isLoser} />
+        <HangmanDrawing
+          mistakes={mistakes}
+          maxMistakes={maxMistakes}
+          prebuiltStrokes={prebuiltStrokes}
+          isLoser={isLoser}
+        />
 
         {/* Columna derecha: palabra, entrada, mensajes e historial */}
         <section className="app__play">

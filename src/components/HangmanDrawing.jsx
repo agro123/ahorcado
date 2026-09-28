@@ -1,13 +1,11 @@
-import { MAX_MISTAKES } from '../utils/letters';
-
 /**
- * Construye el dibujo ASCII según el número de fallos.
- * Cada fallo agrega un trazo, en el orden tradicional:
+ * Construye el dibujo ASCII según el número de trazos visibles (0 a 10),
+ * en el orden tradicional:
  *  1) Base  2) Poste vertical  3) Poste horizontal  4) Cuerda  5) Cabeza
  *  6) Tronco  7) Brazo izq.  8) Brazo der.  9) Pierna izq.  10) Pierna der.
  */
-function buildAsciiArt(mistakes) {
-  const has = (step) => mistakes >= step;
+function buildAsciiArt(strokes) {
+  const has = (step) => strokes >= step;
 
   const post = has(2) ? '  |' : '   ';
 
@@ -24,7 +22,7 @@ function buildAsciiArt(mistakes) {
   return lines.join('\n');
 }
 
-/** Nombre del último trazo dibujado (para lectores de pantalla y la leyenda). */
+/** Nombre de cada trazo (para la leyenda y lectores de pantalla). */
 const STROKES = [
   'Base',
   'Poste vertical',
@@ -38,16 +36,21 @@ const STROKES = [
   'Pierna derecha',
 ];
 
-export default function HangmanDrawing({ mistakes, isLoser }) {
-  const lastStroke = mistakes > 0 ? STROKES[mistakes - 1] : 'Nada dibujado aún';
+/**
+ * - Fácil: se parte de 0 trazos y cada fallo construye también la horca.
+ * - Difícil: la horca (4 trazos) ya está dibujada; los fallos arman el muñeco.
+ */
+export default function HangmanDrawing({ mistakes, maxMistakes, prebuiltStrokes, isLoser }) {
+  const strokes = prebuiltStrokes + mistakes;
+  const lastStroke = mistakes > 0 ? STROKES[strokes - 1] : 'Nada dibujado aún';
 
   return (
     <figure className={`drawing ${isLoser ? 'drawing--lost' : ''}`}>
-      <pre aria-label={`Dibujo del ahorcado: ${mistakes} de ${MAX_MISTAKES} trazos`}>
-        {buildAsciiArt(mistakes)}
+      <pre aria-label={`Dibujo del ahorcado: ${mistakes} de ${maxMistakes} fallos`}>
+        {buildAsciiArt(strokes)}
       </pre>
       <figcaption>
-        Fallos: <strong>{mistakes}</strong> / {MAX_MISTAKES}
+        Fallos: <strong>{mistakes}</strong> / {maxMistakes}
         <span className="drawing__stroke"> · Último trazo: {lastStroke}</span>
       </figcaption>
     </figure>

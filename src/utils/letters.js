@@ -1,5 +1,16 @@
-/** Número máximo de fallos permitidos (uno por cada trazo del dibujo). */
-export const MAX_MISTAKES = 10;
+/**
+ * Niveles de dificultad.
+ * - maxMistakes:  fallos permitidos antes de perder.
+ * - prebuiltStrokes: trazos del dibujo que ya aparecen al iniciar
+ *   (en difícil la horca completa ya está construida).
+ * En ambos casos maxMistakes + prebuiltStrokes = 10 trazos totales.
+ */
+export const DIFFICULTIES = {
+  easy: { label: 'Fácil', maxMistakes: 10, prebuiltStrokes: 0 },
+  hard: { label: 'Difícil', maxMistakes: 6, prebuiltStrokes: 4 },
+};
+
+export const DEFAULT_DIFFICULTY = 'hard';
 
 /** Expresión regular que acepta exactamente UNA letra (incluye la ñ). */
 const SINGLE_LETTER_REGEX = /^[a-zñ]$/;

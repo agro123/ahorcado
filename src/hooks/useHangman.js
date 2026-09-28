@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useReducer } from 'react';
 import { WORDS } from '../data/words';
-import { MAX_MISTAKES, isValidLetter, normalizeLetter, pickRandomWord } from '../utils/letters';
+import { DEFAULT_DIFFICULTY, DIFFICULTIES, isValidLetter, normalizeLetter, pickRandomWord } from '../utils/letters';
 
 /* ------------------------------------------------------------------ *
  * Estado del juego
@@ -8,12 +8,14 @@ import { MAX_MISTAKES, isValidLetter, normalizeLetter, pickRandomWord } from '..
  * - word:     palabra secreta elegida por la computadora
  * - guessed:  letras intentadas por el jugador, en orden
  * - feedback: último mensaje para el jugador ({ type, text } o null)
+ * - difficulty: 'easy' (10 fallos) o 'hard' (6 fallos)
  * Todo lo demás (errores, victoria, derrota…) se DERIVA de estos datos,
  * así evitamos estados duplicados que se puedan desincronizar.
  * ------------------------------------------------------------------ */
 
-function createInitialState(previousWord = null) {
+function createInitialState(difficulty = DEFAULT_DIFFICULTY, previousWord = null) {
   return {
+    difficulty,
     word: pickRandomWord(WORDS, previousWord),
     guessed: [],
     feedback: null,
@@ -63,7 +65,11 @@ function hangmanReducer(state, action) {
 
     case 'RESTART':
       // Nueva partida con otra palabra al azar (distinta de la anterior).
-      return createInitialState(state.word);
+      return createInitialState(state.difficulty, state.word);
+
+    case 'SET_DIFFICULTY':
+      // Cambiar la dificultad inicia una partida nueva con ese nivel.
+      return createInitialState(action.difficulty, state.word);
 
     default:
       return state;
@@ -76,7 +82,8 @@ function hangmanReducer(state, action) {
  * ------------------------------------------------------------------ */
 export function useHangman() {
   const [state, dispatch] = useReducer(hangmanReducer, null, () => createInitialState());
-  const { word, guessed, feedback } = state;
+  const { word, guessed, feedback, difficulty } = state;
+  const { maxMistakes, prebuiltStrokes } = DIFFICULTIES[difficulty];
 
   const derived = useMemo(() => {
     const wordLetters = lettersOf(word);
@@ -84,18 +91,18 @@ export function useHangman() {
     const correctLetters = guessed.filter((l) => wordLetters.has(l));
     const mistakes = wrongLetters.length;
     const isWinner = [...wordLetters].every((l) => guessed.includes(l));
-    const isLoser = mistakes >= MAX_MISTAKES;
+    const isLoser = mistakes >= maxMistakes;
 
     return {
       wrongLetters,
       correctLetters,
       mistakes,
-      remaining: MAX_MISTAKES - mistakes,
+      remaining: maxMistakes - mistakes,
       isWinner,
       isLoser,
       isGameOver: isWinner || isLoser,
     };
-  }, [word, guessed]);
+  }, [word, guessed, maxMistakes]);
 
   const guess = useCallback(
     (letter) => {
@@ -108,5 +115,21 @@ export function useHangman() {
 
   const restart = useCallback(() => dispatch({ type: 'RESTART' }), []);
 
-  return { word, guessed, feedback, ...derived, guess, restart };
+  const setDifficulty = useCallback(
+    (value) => dispatch({ type: 'SET_DIFFICULTY', difficulty: value }),
+    [],
+  );
+
+  return {
+    word,
+    guessed,
+    feedback,
+    difficulty,
+    maxMistakes,
+    prebuiltStrokes,
+    ...derived,
+    guess,
+    restart,
+    setDifficulty,
+  };
 }

@@ -78,6 +78,23 @@ button.link { background: none; color: var(--accent); text-decoration: underline
   .app__board { grid-template-columns: 1fr; }
 }
 
+/* ---------- Selector de dificultad ---------- */
+.difficulty {
+  display: inline-flex;
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.difficulty__option {
+  border-radius: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 500;
+}
+.difficulty__option--active { background: var(--accent); color: #fff; font-weight: 700; }
+.difficulty__hint { font-size: 0.8em; opacity: 0.8; }
+
 .app__play { display: flex; flex-direction: column; gap: 1rem; }
 .app__remaining { margin: 0; color: var(--muted); }
 .app__footer { text-align: center; margin-top: 1rem; }
