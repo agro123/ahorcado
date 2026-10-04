@@ -28,14 +28,18 @@ const BODY_PARTS = [
 
 /**
  * El dibujo completo son 10 trazos; `strokeSteps[fallos]` indica cuántos se
- * ven tras cada fallo (según la dificultad, siempre desde la base).
+ * ven tras cada fallo (en difícil la horca ya viene dibujada desde el inicio).
  */
 export default function HangmanDrawing({ mistakes, maxMistakes, strokeSteps, skin = DEFAULT_SKIN, isLoser }) {
   const strokes = strokeSteps[mistakes];
   const has = (step) => strokes >= step;
   const { parts, figureClass = '' } = SKINS[skin] ?? SKINS[DEFAULT_SKIN];
   const lastStroke =
-    mistakes > 0 ? STROKES.slice(strokeSteps[mistakes - 1], strokes).join(' y ') : 'Nada dibujado aún';
+    mistakes > 0
+      ? STROKES.slice(strokeSteps[mistakes - 1], strokes).join(' y ')
+      : strokes > 0
+        ? 'Horca lista'
+        : 'Nada dibujado aún';
 
   return (
     <figure className={`drawing ${isLoser ? 'drawing--lost' : ''}`}>

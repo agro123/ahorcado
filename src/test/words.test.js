@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { WORDS } from '../data/words';
+import { WORD_LENGTHS, filterByLength } from '../utils/letters';
 
 describe('banco de palabras', () => {
   it('no tiene palabras repetidas', () => {
@@ -12,5 +13,10 @@ describe('banco de palabras', () => {
       expect(word).toMatch(/^[a-zñ]+$/);
       expect(hint.trim().length).toBeGreaterThan(0);
     });
+  });
+
+  it('cada palabra pertenece a algún rango de letras', () => {
+    const total = Object.keys(WORD_LENGTHS).reduce((sum, key) => sum + filterByLength(WORDS, key).length, 0);
+    expect(total).toBe(WORDS.length);
   });
 });

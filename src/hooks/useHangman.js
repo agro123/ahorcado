@@ -1,6 +1,15 @@
 import { useCallback, useMemo, useReducer } from 'react';
 import { WORDS } from '../data/words';
-import { DEFAULT_DIFFICULTY, DIFFICULTIES, isValidLetter, normalizeLetter, pickRandomWord } from '../utils/letters';
+import {
+  DEFAULT_DIFFICULTY,
+  DEFAULT_WORD_LENGTH,
+  DIFFICULTIES,
+  HINT_AFTER_MISTAKES,
+  filterByLength,
+  isValidLetter,
+  normalizeLetter,
+  pickRandomWord,
+} from '../utils/letters';
 
 /* ------------------------------------------------------------------ *
  * Estado del juego
@@ -9,14 +18,16 @@ import { DEFAULT_DIFFICULTY, DIFFICULTIES, isValidLetter, normalizeLetter, pickR
  * - guessed:  letras intentadas por el jugador, en orden
  * - feedback: último mensaje para el jugador ({ type, text } o null)
  * - difficulty: 'easy' (10 fallos) o 'hard' (6 fallos)
+ * - wordLength: 'short' (3–6 letras) o 'long' (7+ letras)
  * Todo lo demás (errores, victoria, derrota…) se DERIVA de estos datos,
  * así evitamos estados duplicados que se puedan desincronizar.
  * ------------------------------------------------------------------ */
 
-function createInitialState(difficulty = DEFAULT_DIFFICULTY, previousEntry = null) {
+function createInitialState(difficulty = DEFAULT_DIFFICULTY, wordLength = DEFAULT_WORD_LENGTH, previousEntry = null) {
   return {
     difficulty,
-    entry: pickRandomWord(WORDS, previousEntry),
+    wordLength,
+    entry: pickRandomWord(filterByLength(WORDS, wordLength), previousEntry),
     guessed: [],
     feedback: null,
   };
@@ -65,11 +76,15 @@ function hangmanReducer(state, action) {
 
     case 'RESTART':
       // Nueva partida con otra palabra al azar (distinta de la anterior).
-      return createInitialState(state.difficulty, state.entry);
+      return createInitialState(state.difficulty, state.wordLength, state.entry);
 
     case 'SET_DIFFICULTY':
       // Cambiar la dificultad inicia una partida nueva con ese nivel.
-      return createInitialState(action.difficulty, state.entry);
+      return createInitialState(action.difficulty, state.wordLength, state.entry);
+
+    case 'SET_WORD_LENGTH':
+      // Cambiar el rango de letras también inicia una partida nueva.
+      return createInitialState(state.difficulty, action.wordLength, state.entry);
 
     default:
       return state;
@@ -82,7 +97,7 @@ function hangmanReducer(state, action) {
  * ------------------------------------------------------------------ */
 export function useHangman() {
   const [state, dispatch] = useReducer(hangmanReducer, null, () => createInitialState());
-  const { entry, guessed, feedback, difficulty } = state;
+  const { entry, guessed, feedback, difficulty, wordLength } = state;
   const { word, hint } = entry;
   const { maxMistakes, strokeSteps } = DIFFICULTIES[difficulty];
 
@@ -102,6 +117,7 @@ export function useHangman() {
       isWinner,
       isLoser,
       isGameOver: isWinner || isLoser,
+      isHintVisible: mistakes >= HINT_AFTER_MISTAKES || isWinner || isLoser,
     };
   }, [word, guessed, maxMistakes]);
 
@@ -121,17 +137,24 @@ export function useHangman() {
     [],
   );
 
+  const setWordLength = useCallback(
+    (value) => dispatch({ type: 'SET_WORD_LENGTH', wordLength: value }),
+    [],
+  );
+
   return {
     word,
     hint,
     guessed,
     feedback,
     difficulty,
+    wordLength,
     maxMistakes,
     strokeSteps,
     ...derived,
     guess,
     restart,
     setDifficulty,
+    setWordLength,
   };
 }

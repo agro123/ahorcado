@@ -8,7 +8,9 @@ import Feedback from './components/Feedback';
 import GameOver from './components/GameOver';
 import DifficultySelector from './components/DifficultySelector';
 import SkinSelector from './components/SkinSelector';
+import WordLengthSelector from './components/WordLengthSelector';
 import { DEFAULT_SKIN } from './components/skins';
+import { HINT_AFTER_MISTAKES } from './utils/letters';
 
 /**
  * Componente raíz. La computadora (el hook useHangman) piensa la palabra
@@ -24,16 +26,19 @@ export default function App() {
     correctLetters,
     wrongLetters,
     difficulty,
+    wordLength,
     maxMistakes,
     strokeSteps,
     mistakes,
     remaining,
+    isHintVisible,
     isWinner,
     isLoser,
     isGameOver,
     guess,
     restart,
     setDifficulty,
+    setWordLength,
   } = useHangman();
   // El skin es solo visual: cambiarlo no reinicia la partida.
   const [skin, setSkin] = useState(DEFAULT_SKIN);
@@ -45,6 +50,7 @@ export default function App() {
         <p>La computadora pensó una palabra de {word.length} letras. ¿Puedes adivinarla?</p>
         <div className="app__options">
           <DifficultySelector value={difficulty} onChange={setDifficulty} />
+          <WordLengthSelector value={wordLength} onChange={setWordLength} />
           <SkinSelector value={skin} onChange={setSkin} />
         </div>
       </header>
@@ -62,8 +68,14 @@ export default function App() {
         {/* Columna derecha: palabra, entrada, mensajes e historial */}
         <section className="app__play">
           <WordDisplay word={word} guessed={guessed} reveal={isLoser} />
-          <p className="app__hint">
-            <strong>Pista:</strong> {hint}
+          <p className="app__hint" aria-live="polite">
+            {isHintVisible ? (
+              <>
+                <strong>Pista:</strong> {hint}
+              </>
+            ) : (
+              `La pista aparecerá después de ${HINT_AFTER_MISTAKES} fallos.`
+            )}
           </p>
 
           {isGameOver ? (

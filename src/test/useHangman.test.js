@@ -13,6 +13,38 @@ describe('useHangman', () => {
     expect(result.current.isLoser).toBe(false);
     expect(result.current.isGameOver).toBe(false);
     expect(result.current.hint).toEqual(expect.any(String));
+    expect(result.current.isHintVisible).toBe(false);
+  });
+
+  it('muestra la pista después de 3 fallos', () => {
+    const { result } = renderHook(() => useHangman());
+    const wrong = [...'bcdfghjklmnpqrstvwxyz'].filter((l) => !result.current.word.includes(l));
+
+    act(() => {
+      result.current.guess(wrong[0]);
+    });
+    expect(result.current.isHintVisible).toBe(false);
+
+    act(() => {
+      result.current.guess(wrong[1]);
+    });
+    expect(result.current.isHintVisible).toBe(false);
+
+    act(() => {
+      result.current.guess(wrong[2]);
+    });
+    expect(result.current.isHintVisible).toBe(true);
+  });
+
+  it('muestra la pista al terminar la partida', () => {
+    const { result } = renderHook(() => useHangman());
+
+    act(() => {
+      [...new Set(result.current.word)].forEach((letter) => result.current.guess(letter));
+    });
+
+    expect(result.current.mistakes).toBe(0);
+    expect(result.current.isHintVisible).toBe(true);
   });
 
   it('registra una letra correcta', () => {
@@ -87,6 +119,23 @@ describe('useHangman', () => {
 
     expect(result.current.isLoser).toBe(true);
     expect(result.current.isGameOver).toBe(true);
+  });
+
+  it('elige palabras dentro del rango de letras seleccionado', () => {
+    const { result } = renderHook(() => useHangman());
+
+    expect(result.current.wordLength).toBe('short');
+    expect(result.current.word.length).toBeGreaterThanOrEqual(3);
+    expect(result.current.word.length).toBeLessThanOrEqual(6);
+
+    act(() => {
+      result.current.guess(result.current.word[0]);
+      result.current.setWordLength('long');
+    });
+
+    expect(result.current.wordLength).toBe('long');
+    expect(result.current.word.length).toBeGreaterThanOrEqual(7);
+    expect(result.current.guessed).toEqual([]);
   });
 
   it('reinicia la partida', () => {
