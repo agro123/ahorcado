@@ -18,6 +18,7 @@ import { DEFAULT_SKIN } from './components/skins';
 export default function App() {
   const {
     word,
+    hint,
     guessed,
     feedback,
     correctLetters,
@@ -61,6 +62,9 @@ export default function App() {
         {/* Columna derecha: palabra, entrada, mensajes e historial */}
         <section className="app__play">
           <WordDisplay word={word} guessed={guessed} reveal={isLoser} />
+          <p className="app__hint">
+            <strong>Pista:</strong> {hint}
+          </p>
 
           {isGameOver ? (
             <GameOver isWinner={isWinner} word={word} onRestart={restart} />

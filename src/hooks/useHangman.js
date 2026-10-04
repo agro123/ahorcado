@@ -5,7 +5,7 @@ import { DEFAULT_DIFFICULTY, DIFFICULTIES, isValidLetter, normalizeLetter, pickR
 /* ------------------------------------------------------------------ *
  * Estado del juego
  * ------------------------------------------------------------------ *
- * - word:     palabra secreta elegida por la computadora
+ * - entry:    entrada del banco elegida por la computadora ({ word, hint })
  * - guessed:  letras intentadas por el jugador, en orden
  * - feedback: último mensaje para el jugador ({ type, text } o null)
  * - difficulty: 'easy' (10 fallos) o 'hard' (6 fallos)
@@ -13,10 +13,10 @@ import { DEFAULT_DIFFICULTY, DIFFICULTIES, isValidLetter, normalizeLetter, pickR
  * así evitamos estados duplicados que se puedan desincronizar.
  * ------------------------------------------------------------------ */
 
-function createInitialState(difficulty = DEFAULT_DIFFICULTY, previousWord = null) {
+function createInitialState(difficulty = DEFAULT_DIFFICULTY, previousEntry = null) {
   return {
     difficulty,
-    word: pickRandomWord(WORDS, previousWord),
+    entry: pickRandomWord(WORDS, previousEntry),
     guessed: [],
     feedback: null,
   };
@@ -53,7 +53,7 @@ function hangmanReducer(state, action) {
         };
       }
 
-      const isHit = lettersOf(state.word).has(letter);
+      const isHit = lettersOf(state.entry.word).has(letter);
       return {
         ...state,
         guessed: [...state.guessed, letter],
@@ -65,11 +65,11 @@ function hangmanReducer(state, action) {
 
     case 'RESTART':
       // Nueva partida con otra palabra al azar (distinta de la anterior).
-      return createInitialState(state.difficulty, state.word);
+      return createInitialState(state.difficulty, state.entry);
 
     case 'SET_DIFFICULTY':
       // Cambiar la dificultad inicia una partida nueva con ese nivel.
-      return createInitialState(action.difficulty, state.word);
+      return createInitialState(action.difficulty, state.entry);
 
     default:
       return state;
@@ -82,7 +82,8 @@ function hangmanReducer(state, action) {
  * ------------------------------------------------------------------ */
 export function useHangman() {
   const [state, dispatch] = useReducer(hangmanReducer, null, () => createInitialState());
-  const { word, guessed, feedback, difficulty } = state;
+  const { entry, guessed, feedback, difficulty } = state;
+  const { word, hint } = entry;
   const { maxMistakes, strokeSteps } = DIFFICULTIES[difficulty];
 
   const derived = useMemo(() => {
@@ -122,6 +123,7 @@ export function useHangman() {
 
   return {
     word,
+    hint,
     guessed,
     feedback,
     difficulty,

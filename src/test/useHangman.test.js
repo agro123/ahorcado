@@ -12,6 +12,7 @@ describe('useHangman', () => {
     expect(result.current.isWinner).toBe(false);
     expect(result.current.isLoser).toBe(false);
     expect(result.current.isGameOver).toBe(false);
+    expect(result.current.hint).toEqual(expect.any(String));
   });
 
   it('registra una letra correcta', () => {

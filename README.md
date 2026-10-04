@@ -13,6 +13,7 @@ La computadora elige una palabra al azar y dibuja el ahorcado; tú adivinas letr
     base + poste vertical, poste horizontal + cuerda, cabeza, tronco, brazos, piernas.
 - Puedes elegir el skin del muñeco (4 opciones, identificadas solo por un icono);
   es solo visual y no reinicia la partida.
+- Cada palabra viene con una **pista** que se muestra debajo de la palabra secreta.
 - Solo se aceptan letras (A–Z y Ñ). Las tildes se ignoran (`á` cuenta como `a`).
 - Repetir una letra muestra un aviso y **no** resta intentos.
 - Ganas al completar la palabra; pierdes al agotar los fallos del nivel y se revela la palabra.
@@ -29,7 +30,7 @@ npm run build    # compila a dist/
 
 ```
 src/
-├── data/words.js           # Banco de palabras
+├── data/words.js           # Banco de palabras con pistas
 ├── utils/letters.js        # Validación, normalización y selección aleatoria
 ├── hooks/useHangman.js     # Lógica del juego (useReducer + estado derivado)
 ├── components/
